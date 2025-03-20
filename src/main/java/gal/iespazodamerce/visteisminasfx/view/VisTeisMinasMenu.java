@@ -2,6 +2,7 @@ package gal.iespazodamerce.visteisminasfx.view;
 
 import gal.iespazodamerce.visteisminasfx.control.Game;
 import gal.iespazodamerce.visteisminasfx.model.Cell;
+
 import java.util.Scanner;
 
 
@@ -9,9 +10,9 @@ import java.util.Scanner;
  * Clase que implementa a interface do xogo, en modo texto
  */
 public class VisTeisMinasMenu {
-    private final int ROWS = 6;
-    private final int COLUMNS = 6;
-    private final int MINES = 8;
+    private int ROWS = 6;
+    private int COLUMNS = 6;
+    private int MINES = 8;
 
     /**
      * Mostra o panel de minas
@@ -63,42 +64,66 @@ public class VisTeisMinasMenu {
         Scanner scanner = new Scanner(System.in);
 
         do {
+            int choice;
+            System.out.println("""
+                    Seleccione un nivel de dificultade:
+                    1.Baixo
+                    2.Medio
+                    3.Alto""");
+
+            do {
+                System.out.print("Eleccion: ");
+                choice = scanner.nextInt();
+                scanner.nextLine();
+            } while (choice < 1 || choice > 3);
+
+            if (choice == 2) {
+                ROWS = COLUMNS = 8; MINES = 20;
+            } else if (choice == 3) {
+                ROWS = COLUMNS = 10; MINES = 40;
+            }
+
             Game game = new Game(ROWS, COLUMNS, MINES);
             boolean failed = false;
 
             do {
-                System.out.println("---Estas xogando ao VisteisMinas---");
-                System.out.println("---  version por: Xaquin Alves  ---");
-                showPanel(game);
-                System.out.print("Introduce a accion(s:Sair, m:Marcar unha celda, d: Desmarcar unha celda, a:Abrir unha celda): ");
-                char choice = scanner.nextLine().charAt(0);
-
-                switch (choice) {
-                    case 's' -> failed = true;
-                    case 'm' -> selectCell(game, scanner, "Selecciona a celda a marcar: ").setState(Cell.getMarcada());
-                    case 'd' -> {
-                        Cell cell = selectCell(game, scanner, "Selecciona a celda a desmarcar: ");
-                        if (cell.getState() == Cell.getTapada()) {
-                            System.out.println("A celda seleccionada non esta marcada");
-                        } else if (cell.getState() == Cell.getDestapada()) {
-                            System.out.println("A celda xa esta aberta");
-                        } else {
-                            cell.setState(Cell.getMarcada());
-                        }
-                    }
-                    case 'a' -> {
-                        Cell cell = selectCell(game, scanner, "Selecciona unha celda para abrir: ");
-                        game.openCell(cell);
-                        if (cell.isMined()) {
-                            game.openAllMines();
-                            showPanel(game);
-                            failed = true;
-                        }
-                    }
-                }
+                failed = playTurn(game, scanner, failed);
             } while (game.checkCellsToOpen() && !failed);
 
         } while (nextGame(scanner));
+    }
+
+    private boolean playTurn(Game game, Scanner scanner, boolean failed) {
+        System.out.println("---Estas xogando ao VisteisMinas---");
+        System.out.println("---  version por: Xaquin Alves  ---");
+        showPanel(game);
+        System.out.print("Introduce a accion(s:Sair, m:Marcar unha celda, d: Desmarcar unha celda, a:Abrir unha celda): ");
+        char choice = scanner.nextLine().charAt(0);
+
+        switch (choice) {
+            case 's' -> failed = true;
+            case 'm' -> selectCell(game, scanner, "Selecciona a celda a marcar: ").setState(Cell.getMarcada());
+            case 'd' -> {
+                Cell cell = selectCell(game, scanner, "Selecciona a celda a desmarcar: ");
+                if (cell.getState() == Cell.getTapada()) {
+                    System.out.println("A celda seleccionada non esta marcada");
+                } else if (cell.getState() == Cell.getDestapada()) {
+                    System.out.println("A celda xa esta aberta");
+                } else {
+                    cell.setState(Cell.getMarcada());
+                }
+            }
+            case 'a' -> {
+                Cell cell = selectCell(game, scanner, "Selecciona unha celda para abrir: ");
+                game.openCell(cell);
+                if (cell.isMined()) {
+                    game.openAllMines();
+                    showPanel(game);
+                    failed = true;
+                }
+            }
+        }
+        return failed;
     }
 
     /**
