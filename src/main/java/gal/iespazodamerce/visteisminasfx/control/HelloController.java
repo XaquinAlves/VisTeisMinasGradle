@@ -1,4 +1,4 @@
-package src.main.java.gal.iespazodamerce.visteisminasfx.control;
+package gal.iespazodamerce.visteisminasfx.control;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

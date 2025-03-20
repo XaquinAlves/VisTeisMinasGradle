@@ -11,7 +11,6 @@ module gal.iespazodamerce.visteisminasfx {
     requires com.almasb.fxgl.all;
 
     opens gal.iespazodamerce.visteisminasfx to javafx.fxml;
-    exports gal.iespazodamerce.visteisminasfx;
     exports gal.iespazodamerce.visteisminasfx.view;
     opens gal.iespazodamerce.visteisminasfx.view to javafx.fxml;
 }
